@@ -1,0 +1,45 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+h1 {
+    text-align: center;
+    margin: 10vh 0 15vh;
+    font-size: 3.5rem;
+}
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    width: fit-content;
+    margin: 20px auto;
+    position: relative;
+  }
+
+  .cell {
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    font-family: Arial, sans-serif;
+    cursor: pointer;
+    position: relative;
+  }
+
+  /* Add right border to first two columns */
+  .cell:nth-child(1), .cell:nth-child(2),
+  .cell:nth-child(4), .cell:nth-child(5),
+  .cell:nth-child(7), .cell:nth-child(8) {
+    border-right: 4px solid #333;
+  }
+
+  /* Add bottom border to first two rows */
+  .cell:nth-child(-n+6) {
+    border-bottom: 4px solid #333;
+  }
+
+  .cell:hover {
+    background-color: #f0f0f0;
+  }
