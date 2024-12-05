@@ -17,6 +17,32 @@ function tacBoard() {
         board[row][column].addTac(player);
         return true;
     };
+    
+    const checkWin = () => {
+        // Check for win in rows
+        for (let i = 0; i < 3; i++) {
+            if (board[i][0].getValue() !== '' && board[i][0].getValue() === board[i][1].getValue() && board[i][1].getValue() === board[i][2].getValue()) {
+                return board[i][0].getValue();
+            }
+        }
+        // Check for win in columns
+        for (let j = 0; j < 3; j++) {
+            if (board[0][j].getValue() !== '' && board[0][j].getValue() === board[1][j].getValue() && board[1][j].getValue() === board[2][j].getValue()) {
+                return board[0][j].getValue();
+            }
+        }
+        // Check for diagonals
+        if (board[0][0].getValue() !== '' && board[0][0].getValue === board[1][1].getValue &&board[1][1].getValue === board[2][2].getValue()) {
+            return board[0][0].getValue();
+        }
+        if (board[0][2].getValue() !== '' && board[0][2].getValue === board[1][1].getValue &&board[1][1].getValue === board[2][0].getValue()) {
+            return board[0][2].getValue();
+        }
+        // Check for draw 
+        const isBoardFull = board.every(row => row.every(cell => cell.getValue() !== ''));
+
+        return isBoardFull ? 'Draw' : null;
+    }
 
     const printBoard = () => {
         console.log('\n Current board:');
@@ -27,7 +53,7 @@ function tacBoard() {
         });
     };
 
-    return { getBoard, chooseSquare, printBoard };
+    return { getBoard, chooseSquare, printBoard, checkWin };
 }
 
 
@@ -72,10 +98,16 @@ function tacController(
 
     const printNewRound = () => {
         board.printBoard();
+        const winner = board.checkWin();
+        if (winner) {
+            console.log(`${winner} wins!`);
+            return;
+        }
         console.log(`${getActivePlayer().name}'s turn.`)
     };
 
     const playRound = (row, column) => {
+
         if (column < 0 || column > 2) {
             console.log('Please choose a column between 0 and 2');
             return;
