@@ -44,6 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
             return isBoardFull ? 'Draw' : null;
         }
+
+        const resetBoard = () => {
+            board.forEach(row => row.forEach(cell => cell.resetTac()))
+        }
     
         const printBoard = () => {
             console.log('\n Current board:');
@@ -54,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
     
-        return { getBoard, chooseSquare, printBoard, checkWin };
+        return { getBoard, chooseSquare, printBoard, checkWin, resetBoard };
     }
     
     
@@ -64,19 +68,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const addTac = (player) => {
             value = player;
         };
+
+        const resetTac = () => {
+            value = '';
+        }
     
         const getValue = () => value;
     
         return {
             addTac,
-            getValue
+            getValue,
+            resetTac
         };
     }
     
-    function tacController(
-        playerOneName = 'Player One',
-        playerTwoName = 'Player Two'
-    ) {
+    function tacController(playerOneName, playerTwoName) {
         const board = tacBoard();
     
         const players = [
@@ -101,6 +107,11 @@ document.addEventListener('DOMContentLoaded', () => {
             board.printBoard();
             console.log(`${getActivePlayer().name}'s turn.`)
         };
+
+        const resetGame = () => {
+            board.resetBoard();
+            activePlayer = players[0];
+        }
     
         const playRound = (row, column) => {
             if (column < 0 || column > 2) {
@@ -142,12 +153,13 @@ document.addEventListener('DOMContentLoaded', () => {
             playRound,
             getActivePlayer,
             getBoard: board.getBoard,
-            winner: board.checkWin
+            winner: board.checkWin,
+            resetGame
         };
     }
     
     function ScreenController() {
-        const game = tacController();
+        let game = null;
         const turn = document.querySelector('.turn');
         const boardUI = document.querySelector('.board');
         const overlay = document.querySelector('#overlay');
@@ -160,7 +172,58 @@ document.addEventListener('DOMContentLoaded', () => {
         const hideOverlay = () => {
             overlay.classList.remove('show');
         }
+
+        const initializeGame = (playerOne, playerTwo) => {
+            game = tacController(playerOne, playerTwo);
+            updateScreen();
+        }
+
+        function showNameModal() {
+            document.querySelector('#modalOverlay').style.display = 'block';
+            document.querySelector('#nameInput').focus();
+        }
+
+        function hideModal() {
+            document.querySelector('#modalOverlay').style.display = 'none';
+            document.querySelector('#nameInput').value = '';
+        }
+
+        function startGame() {
+            let userNum = 1;
+            let userOneName = '';
+            let userTwoName = '';
     
+
+    
+            function submitName() {
+                const nameInput = document.querySelector('#nameInput');
+                let userName = nameInput.value.trim();
+    
+                if (userName) {
+                    if (userNum === 2) {
+                        userTwoName = userName;
+                        console.log(`User ${userNum} name is ${userName}`);
+                        userName = 1;
+                        hideModal();
+                        initializeGame(userOneName, userTwoName);
+                    } else {
+                        userOneName = userName;
+                        console.log(`User ${userNum} name is ${userName}`);
+                        userNum++;
+                        hideModal();
+                        showNameModal();
+                    }
+                } else {
+                    alert('Please enter a valid name');
+                }
+            }
+    
+            document.querySelector('#submit').addEventListener('click', submitName);
+            document.querySelector('#cancel').addEventListener('click', hideModal);
+    
+        }
+        startGame();
+
         const updateScreen = (msg) => {
             if (msg) {
                 turn.textContent = msg;
@@ -193,6 +256,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     // Hide the overlay after click (optional)
                     hideOverlay();
+                    game.resetGame();
+                    updateScreen();
                   });
                 if (winner === 'Draw') {
                     result.textContent = `It's a draw`
@@ -202,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
         }
-    
+
         const handleBoardClick = (e) => {
             const selectedRow = e.target.dataset.row;
             const selectedColumn = e.target.dataset.column;
@@ -212,12 +277,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const message = game.playRound(selectedRow, selectedColumn);
             updateScreen(message);
         }
+
+        const resetGame = () => {
+            game.resetGame();
+            hideOverlay();
+            updateScreen();
+        }
+
         boardUI.addEventListener('click', handleBoardClick);
+        document.querySelector('#reset').addEventListener('click', resetGame);
+        document.querySelector('#start').addEventListener('click', () => showNameModal());
     
-        updateScreen();
-    
+        //updateScreen();
+        return {
+            updateScreen,
+            showOverlay,
+            hideOverlay,
+            resetGame
+        };
     }
-    
-    ScreenController();
+ScreenController();
     
 })

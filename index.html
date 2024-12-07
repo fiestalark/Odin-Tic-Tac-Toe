@@ -10,6 +10,20 @@
 <body>
     <div class="tac-container">
         <h1>Tic Tac Toe</h1>
+        <div class="buttons">
+            <button id="start">Start Game</button>
+            <button id="reset">Reset Game</button>
+        </div>
+
+        <div id="modalOverlay" class="modal-overlay">
+            <div class="modal">
+                <h2>Enter Your Name</h2>
+                <input type="text" id="nameInput" placeholder="Your name...">
+                <button class="submit-btn" id="submit">Submit</button>
+                <button class="cancel-btn" id="cancel">Cancel</button>
+            </div>
+        </div>
+
         <h2 class="turn"></h2>
         <div class="board"></div>
         <div id="overlay" class="overlay">
