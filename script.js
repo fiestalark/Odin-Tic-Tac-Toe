@@ -164,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const boardUI = document.querySelector('.board');
         const overlay = document.querySelector('#overlay');
         const result = document.querySelector('.result');
+        let userNum = 1;
 
         const showOverlay = () => {
             overlay.classList.add('show');
@@ -179,6 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function showNameModal() {
+            const playerId = document.querySelector('#player');
+            playerId.textContent = `Player ${userNum}`;
             document.querySelector('#modalOverlay').style.display = 'block';
             document.querySelector('#nameInput').focus();
         }
@@ -189,11 +192,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function startGame() {
-            let userNum = 1;
             let userOneName = '';
             let userTwoName = '';
-    
-
     
             function submitName() {
                 const nameInput = document.querySelector('#nameInput');
